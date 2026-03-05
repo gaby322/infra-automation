@@ -1,0 +1,8 @@
+- hosts: localhost
+  connection: local
+  gather_facts: no
+
+  tasks:
+    - name: Test Ansible
+      debug:
+        msg: "Ansible is working from GitHub Actions!"
