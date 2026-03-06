@@ -3,12 +3,12 @@ services:
     build: ./prometheus
     ports:
       - "9090:9090"
-
+restart: always.
   loki:
     build: ./loki
     ports:
       - "3100:3100"
-
+restart: always.
   node-exporter:
     image: prom/node-exporter:latest
     container_name: node-exporter
@@ -37,3 +37,4 @@ services:
       - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
+restart: always.
