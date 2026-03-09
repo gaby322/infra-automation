@@ -1,7 +1,23 @@
-- hosts: local
-  gather_facts: no
-
+- hosts: all
+  become: yes  # للتشغيل بصلاحيات sudo
   tasks:
-    - name: Test Ansible
+    - name: Ensure Docker Compose is installed
+      apt:
+        name: docker-compose
+        state: present
+        update_cache: yes
+
+    - name: Copy project files to the server (if needed)
+      # هذه الخطوة اختيارية إذا كانت الملفات موجودة فعلاً
       debug:
-        msg: "Ansible pipeline works!"
+        msg: "Starting the monitoring stack using Docker Compose..."
+
+    - name: Deploy Monitoring Stack via Docker Compose
+      community.docker.docker_compose_v2:
+        project_src: /home/ubuntu/monitoring-project
+        state: present
+      register: output
+
+    - name: Show Docker Compose output
+      debug:
+        var: output
