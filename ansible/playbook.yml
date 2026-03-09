@@ -1,23 +1,17 @@
-- hosts: all
-  become: yes  # للتشغيل بصلاحيات sudo
+---
+- name: Deploy Monitoring Stack to AWS
+  hosts: all           # سيقوم باستخدام الـ IP الموجود في ملف الـ inventory
+  become: yes          # للتشغيل بصلاحيات sudo
+  
   tasks:
-    - name: Ensure Docker Compose is installed
-      apt:
-        name: docker-compose
-        state: present
-        update_cache: yes
+    - name: Ensure the project directory exists
+      file:
+        path: /home/ubuntu/monitoring-project
+        state: directory
+        owner: ubuntu
+        group: ubuntu
 
-    - name: Copy project files to the server (if needed)
-      # هذه الخطوة اختيارية إذا كانت الملفات موجودة فعلاً
-      debug:
-        msg: "Starting the monitoring stack using Docker Compose..."
-
-    - name: Deploy Monitoring Stack via Docker Compose
-      community.docker.docker_compose_v2:
-        project_src: /home/ubuntu/monitoring-project
-        state: present
-      register: output
-
-    - name: Show Docker Compose output
-      debug:
-        var: output
+    - name: Run Docker Compose Up
+      command: docker compose up -d
+      args:
+        chdir: /home/ubuntu/monitoring-project
